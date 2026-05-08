@@ -6,7 +6,13 @@ This project focuses on exploratory data analysis (EDA) of student mental health
 The aim of this project is to analyze patterns associated with depression, anxiety, and panic attacks among students and identify possible relationships between mental health indicators and demographic or academic factors such as gender, CGPA, course, marital status, and year of study.
 
 ---
-
+## Project Workflow
+1. Data Cleaning and Preprocessing in R
+2. Exploratory Data Analysis (EDA)
+3. Statistical Testing using Chi-square Analysis
+4. Dashboard Development in Power BI
+5. Insight Generation and Reporting
+ ---
 # Objectives
 - Perform data cleaning and preprocessing using R
 - Conduct exploratory data analysis (EDA)
