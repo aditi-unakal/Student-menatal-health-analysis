@@ -1,0 +1,189 @@
+---
+title: "Student_mental_health_analysis"
+output: html_document
+date: "2026-05-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Introduction
+The motivation for this project was inspired by the EUROSTUDENT VIII report on student well-being in the European Higher Education Area, which highlights the growing concerns regarding mental health issues among university students across Europe. The report discusses how factors such as academic pressure, financial difficulties, social conditions, and personal circumstances influence student well-being and mental health.
+Based on these findings, this project aims to perform an exploratory data analysis on a student mental health dataset using R. The objective is to identify patterns and relationships between demographic and academic factors and mental health indicators such as depression, anxiety, and panic attacks.
+
+```{r}
+library(janitor)
+library(ggplot2)
+```
+
+## Loading dataset
+```{r}
+data_set <- read.csv("C:/Users/HP/Desktop/Projects/Dataset/Student Mental health.csv")
+```
+
+## Dataset Dimensions
+
+```{r}
+dim(data_set)
+```
+
+## Dataset Structure
+
+```{r}
+str(data_set)
+```
+
+## Summary Statistics
+
+```{r}
+summary(data_set)
+```
+## Cleaning Dataset
+```{r}
+data_set<-clean_names(data_set)
+colnames(data_set)
+```
+### Checking for Null values
+```{r}
+colSums(is.na(data_set))
+```
+There is only one Null value in the column age, we can just omit that value 
+### omiting Null value
+```{r}
+data_set<-na.omit(data_set)
+df<-data_set
+```
+## Number of students suffering from Depression
+```{r}
+table(df$do_you_have_depression)
+```
+## Number of students suffering from anxiety
+```{r}
+table(df$do_you_have_anxiety)
+```
+## Number of people having panic attacks
+```{r}
+table(df$do_you_have_panic_attack)
+```
+## Gender vs depression
+```{r}
+table(df$choose_your_gender,df$do_you_have_depression)
+```
+
+## plot
+```{r}
+ggplot(df,
+       aes(x=choose_your_gender,
+           fill=do_you_have_depression))+
+  geom_bar(position = "dodge")
+```
+## Percentage analysis
+```{r}
+round(prop.table(table(df$choose_your_gender, df$do_you_have_depression), margin = 1)*100,2)
+```
+## chisquare test
+```{r}
+chisq.test(table(df$choose_your_gender,df$do_you_have_depression))
+```
+From the comparison of gender and depression we can conclude that depression is slightly higher in females compared to males. However, the chi-square test produced a p-value greater than 0.05, indicating that the association between gender and depression is not statistically significant in this dataset.
+## Course vs Depression
+```{r}
+  table(df$what_is_your_course,df$do_you_have_depression)
+```
+## Percentage analysis
+```{r}
+round(prop.table(table(df$what_is_your_course, df$do_you_have_depression), margin = 1)*100,2)
+```
+
+Due to the large number of course categories and small sample counts in certain groups, the chi-square approximation may be unreliable for this comparison.
+
+## Finding the unique bins for cgpa
+```{r}
+unique(df$what_is_your_cgpa)
+```
+## customized bins
+```{r}
+df$cgpa_grp<-ifelse(df$what_is_your_cgpa %in% c("0 - 1.99","2.00 - 2.49"), "0-2.5",
+                      ifelse(df$what_is_your_cgpa == "2.50 - 2.99",
+                             "2.5-3.0",
+                            "3.0-4.0"))
+```
+## CGPA vs depression
+```{r}
+table(df$cgpa_grp,df$do_you_have_depression)
+```
+## percentage analysis
+```{r}
+round(prop.table(table(df$cgpa_grp,df$do_you_have_depression), margin=1)*100,2)
+```
+## Plot
+```{r}
+ggplot(df, aes(x=cgpa_grp, 
+               fill=do_you_have_depression))+
+  geom_bar(position = "dodge")
+```
+
+Lower CGPA categories contained very few observations, so conclusions from these groups should be interpreted cautiously.
+
+
+## age vs Depression
+```{r}
+table(df$age,df$do_you_have_depression)
+```
+## percentage analysis
+```{r}
+round(prop.table(table(df$age,df$do_you_have_depression),margin = 1)*100,2)
+```
+
+## Plots
+```{r}
+ggplot(df, aes(x=age, 
+               fill=do_you_have_depression))+
+  geom_bar(position = "dodge")
+```
+
+## Marital status vs depression
+```{r}
+table(df$marital_status,df$do_you_have_depression)
+```
+
+## Percentage analysis
+```{r}
+round(prop.table(table(df$marital_status,df$do_you_have_depression),margin = 1)*100,2)
+```
+## chisquare 
+```{r}
+chisq.test(table(df$marital_status,df$do_you_have_depression))
+```
+The chi-square test indicated a statistically significant association between marital status and depression (p < 0.05). In this dataset, all married participants reported depression. However, the number of married individuals was very small, so broader conclusions cannot be made from this result alone.
+## Anxiety vs depression
+```{r}
+table(df$do_you_have_anxiety,df$do_you_have_depression)
+```
+## Chisquare test
+```{r}
+chisq.test(table(df$do_you_have_anxiety,df$do_you_have_depression))
+```
+The chi-square test indicates a statistically significant association between anxiety and depression in this dataset, suggesting that students reporting anxiety were more likely to also report depression.
+
+## Deprssion vs panic attck
+```{r}
+table(df$do_you_have_depression,df$do_you_have_panic_attack)
+```
+## chi-square test
+```{r}
+chisq.test(table(df$do_you_have_panic_attack,df$do_you_have_depression))
+```
+Students who reported panic attacks also showed a higher prevalence of depression compared to students without panic attacks.The chi-square test further indicated that the association between panic attacks and depression was statistically significant (p < 0.05).
+
+## anxiety vs panic attack
+```{r}
+table(df$do_you_have_anxiety,df$do_you_have_panic_attack)
+```
+# Conclusion
+
+This project explored patterns associated with student mental health using exploratory data analysis and statistical testing in R. The analysis focused on factors such as gender, age, CGPA, marital status, anxiety, and panic attacks in relation to depression among students.
+
+The findings showed that anxiety and panic attacks had strong associations with depression, while some demographic factors such as gender did not show statistically significant relationships in this dataset. Marital status also showed a significant association with depression, although the number of married participants was very small and therefore the findings should be interpreted cautiously.
+
+The project also demonstrated important data science processes including data cleaning, handling missing values, feature engineering, exploratory data analysis, percentage analysis, visualization, and chi-square hypothesis testing. Overall, this analysis highlights how data analytics can be used to better understand patterns in student mental health and support future research in this area.
